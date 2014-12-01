@@ -124,12 +124,13 @@ module.exports = function(context) {
 // -------------------------------
 
 
-    var targetDir        = '.';
+    var targetDir        = context.opts.plugin.dir;  // directory where this plugin is currently stored
     var androidApiVersion   = 21;
 
     var playServicesLib         = targetDir+'/google-play-services_lib';
     var playServicesSourceLib   = androidHome+"/extras/google/google_play_services/libproject/google-play-services_lib/";
 
+    log("Importing Play Services to "+playServicesLib);
 
     var deferral = new Q.defer();
     copyRecursiveSync(playServicesSourceLib+"/", playServicesLib+'/');
