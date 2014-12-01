@@ -30,14 +30,13 @@ module.exports = function(context) {
      */
     var copyRecursiveSync = function(src, dest) {
 
-        log("Copying "+src+" to "+dest+" ...");
         try {
             var exists = fs.existsSync(src);
             var stats = exists && fs.statSync(src);
             var isDirectory = exists && stats.isDirectory();
             if (exists && isDirectory) {
 
-
+                log("Copying "+src+" to "+dest+" ...");
                 fs.mkdirSync(dest);
                 fs.readdirSync(src).forEach(function (childItemName) {
                     copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName));
