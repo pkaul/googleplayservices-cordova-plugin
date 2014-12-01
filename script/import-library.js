@@ -1,6 +1,6 @@
 // Adds Google PlayServices dependencies to the current Cordova project
-// This is done by turning (a copy of) Android SDK libraries AppCompat, MediaRouter and PlayServices into
-// project libraries and linking them to the current project.
+// This is done by turning (a copy of) PlayServices into a
+// project library and linking it to the current project.
 // Requires the Android SDK to be installed locally including ANDROID_HOME environment variable to be set.
 
 module.exports = function(context) {
