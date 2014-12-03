@@ -107,7 +107,7 @@ module.exports = function(context) {
 
 
     /**
-     * Registers PlayServices in the AndroidManifest.xml
+     * Sets the api version in project's properties
      */
     var updateProjectApiVersion = function(path, apiVersion) {
 
