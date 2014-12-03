@@ -8,6 +8,8 @@ module.exports = function(context) {
     var fs = require('fs');
     var path = require('path');
     var exec = require('child_process').exec;
+
+    // see https://github.com/apache/cordova-lib/blob/master/cordova-lib/templates/hooks-README.md
     var Q = context.requireCordovaModule('q');
 
     var log = function(message) {
@@ -184,7 +186,7 @@ module.exports = function(context) {
             prepareLibraryProject(mediaRouterLib, function () {
 
                 // --- turn PlayServicesLib into a library project
-                //updateProjectApiVersion(playServicesLib, androidApiVersion);
+                //updateProjectApiVersion(playServicesLib, androidApiVersion);   // TODO problem when using Android Api version 21+
                 prepareLibraryProject(playServicesLib, function () {
                     // add all three libraries to current project
                     deferral.resolve();
