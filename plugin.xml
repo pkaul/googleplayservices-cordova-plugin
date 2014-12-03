@@ -7,15 +7,23 @@
         <engine name="cordova" version=">=3.0.0" />
     </engines>
 
-    <name>Google Play Services for Android</name>
+    <name>Google Play Services (including Mediarouter) integration for Android</name>
 
     <platform name="android">
+
+        <!-- prepare libraries -->
+        <hook type="before_plugin_install" src="script/import-library.js" />
+
+        <!-- add libraries -->
+        <framework src="appcompat_lib" custom="true" />
+        <framework src="mediarouter_lib" custom="true" />
+        <framework src="google-play-services_lib" custom="true" />
+
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
         </config-file>
         <source-file src="version.xml" target-dir="res/values" />
-        <framework src="google-play-services_lib" custom="true" />
-        <hook type="before_plugin_install" src="script/import-library.js" />
 
     </platform>
+
 </plugin>

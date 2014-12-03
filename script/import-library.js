@@ -56,7 +56,7 @@ module.exports = function(context) {
 
         log("Executing "+command+" ...");
         try {
-            var p = exec(command, function (error, stdout, stderr) {
+            var p = exec(command, {maxBuffer: 500 * 1024},function (error, stdout, stderr) {
 
                 if (!!stdout) {
                     log("Exec: " + stdout);
@@ -119,29 +119,81 @@ module.exports = function(context) {
     };
 
 
+    /**
+     * Adds a library reference to a "library project"
+     * @param libraryPath path The location of the project
+     * @param referencePaths The relative locations of the references
+     */
+    var addLibraryReference = function(libraryPath, referencePaths, callback) {
+        var projectProperties = libraryPath+"/project.properties";
+        log("Adding references "+referencePaths+" to "+projectProperties);
+        fs.readFile(projectProperties, 'utf8', function (err,data) {
+            if (err) {
+                throw new Error("Error reading "+projectProperties);
+            }
+            // find the next available reference index
+            var referenceIndex = 1;
+            while( data.indexOf('android.library.reference.'+referenceIndex) > -1 ) {
+                referenceIndex++;
+            }
+            // compute the entries to be appended
+            var appends = "";
+            for( var i=0; i<referencePaths.length; i++ ) {
+                appends += "\n\randroid.library.reference."+(i+referenceIndex)+"="+referencePaths[i];
+            }
+            // append
+            fs.appendFile(projectProperties, appends, function (err) {
+                log("Added references to "+projectProperties+": "+appends);
+                if( !!callback ) {
+                    callback();
+                }
+            });
+        });
+    };
+
 
 // -------------------------------
 
 
     var targetDir        = context.opts.plugin.dir;  // use this plugin's directory as a working dir
+    targetDir = targetDir.replace(/\\/g,'/'); // normalize path separators for Windows
+
     var androidApiVersion   = 21;  // TODO make this configurable via environment
 
-    var playServicesLib         = targetDir+'/google-play-services_lib';
-    var playServicesSourceLib   = androidHome+"/extras/google/google_play_services/libproject/google-play-services_lib/";
+    var appCompatLib            = targetDir+'/appcompat_lib';
+    var appCompatSourceLib      = androidHome+"/extras/android/support/v7/appcompat";
 
-    log("Importing Play Services to "+playServicesLib);
+    var mediaRouterLib          = targetDir+'/mediarouter_lib';
+    var mediaRouterSourceLib    = androidHome+"/extras/android/support/v7/mediarouter";
+
+    var playServicesLib         = targetDir+'/google-play-services_lib';
+    var playServicesSourceLib   = androidHome+"/extras/google/google_play_services/libproject/google-play-services_lib";
+
 
     var deferral = new Q.defer();
-    copyRecursiveSync(playServicesSourceLib+"/", playServicesLib+'/');
-    updateProjectApiVersion(playServicesLib, androidApiVersion);
-    prepareLibraryProject(playServicesLib, function() {
-        // add all three libraries to current project
-        deferral.resolve();
+
+    copyRecursiveSync(appCompatSourceLib+'/', appCompatLib+'/');
+    copyRecursiveSync(mediaRouterSourceLib+'/', mediaRouterLib+'/');
+    copyRecursiveSync(playServicesSourceLib+'/', playServicesLib+'/');
+
+    // --- turn AppCompatLib into a library project
+    prepareLibraryProject(appCompatLib, function() {
+
+        // --- turn MediarouterLib into a library project (after adjusting dependencies)
+        addLibraryReference(mediaRouterLib, ['../appcompat_lib'], function() {    // HACK: A _relative_ path is required here!
+            prepareLibraryProject(mediaRouterLib, function () {
+
+                // --- turn PlayServicesLib into a library project
+                updateProjectApiVersion(playServicesLib, androidApiVersion);
+                prepareLibraryProject(playServicesLib, function () {
+                    // add all three libraries to current project
+                    deferral.resolve();
+                });
+            });
+        });
     });
 
-
     return deferral.promise;
-
 };
 
 
