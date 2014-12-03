@@ -158,7 +158,7 @@ module.exports = function(context) {
     var targetDir        = context.opts.plugin.dir;  // use this plugin's directory as a working dir
     targetDir = targetDir.replace(/\\/g,'/'); // normalize path separators for Windows
 
-    var androidApiVersion   = 21;  // TODO make this configurable via environment
+    //var androidApiVersion   = 21;  // TODO make this configurable via environment
 
     var appCompatLib            = targetDir+'/appcompat_lib';
     var appCompatSourceLib      = androidHome+"/extras/android/support/v7/appcompat";
@@ -184,7 +184,7 @@ module.exports = function(context) {
             prepareLibraryProject(mediaRouterLib, function () {
 
                 // --- turn PlayServicesLib into a library project
-                updateProjectApiVersion(playServicesLib, androidApiVersion);
+                //updateProjectApiVersion(playServicesLib, androidApiVersion);
                 prepareLibraryProject(playServicesLib, function () {
                     // add all three libraries to current project
                     deferral.resolve();

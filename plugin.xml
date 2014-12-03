@@ -22,7 +22,6 @@
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
         </config-file>
-        <source-file src="version.xml" target-dir="res/values" />
 
     </platform>
 
