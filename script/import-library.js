@@ -123,8 +123,8 @@ module.exports = function(context) {
 // -------------------------------
 
 
-    var targetDir        = context.opts.plugin.dir;  // directory where this plugin is currently stored
-    var androidApiVersion   = 21;
+    var targetDir        = context.opts.plugin.dir;  // use this plugin's directory as a working dir
+    var androidApiVersion   = 21;  // TODO make this configurable via environment
 
     var playServicesLib         = targetDir+'/google-play-services_lib';
     var playServicesSourceLib   = androidHome+"/extras/google/google_play_services/libproject/google-play-services_lib/";
